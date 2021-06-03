@@ -1,4 +1,3 @@
-
 class DrawingCanvas {
   static final List<List<int>> _map = [
     [0x1, 0x8],
@@ -6,21 +5,17 @@ class DrawingCanvas {
     [0x4, 0x20],
     [0x40, 0x80]
   ];
-
   final int width;
   final int height;
-
   late List<int> content;
 
   DrawingCanvas(this.width, this.height) {
     if (width % 2 != 0) {
       throw Exception('Width must be a multiple of 2!');
     }
-
     if (height % 4 != 0) {
       throw Exception('Height must be a multiple of 4!');
     }
-
     content = List<int>.filled(width * height ~/ 8, 0);
     _fillContent();
   }
@@ -29,13 +24,14 @@ class DrawingCanvas {
     if (!(x >= 0 && x < width && y >= 0 && y < height)) {
       return;
     }
-
+    // ignore: parameter_assignments
     x = x.floor();
+    // ignore: parameter_assignments
     y = y.floor();
-    var nx = (x / 2).floor();
-    var ny = (y / 4).floor();
-    var coord = (nx + width / 2 * ny).toInt();
-    var mask = _map[y % 4][x % 2];
+    final nx = (x / 2).floor();
+    final ny = (y / 4).floor();
+    final coord = (nx + width / 2 * ny).toInt();
+    final mask = _map[y % 4][x % 2];
     func(coord, mask);
   }
 
@@ -68,13 +64,12 @@ class DrawingCanvas {
   }
 
   String frame([String delimiter = '\n']) {
-    var result = [];
+    final result = <String>[];
     for (var i = 0, j = 0; i < content.length; i++, j++) {
       if (j == width / 2) {
         result.add(delimiter);
         j = 0;
       }
-
       if (content[i] == 0) {
         result.add(' ');
       } else {

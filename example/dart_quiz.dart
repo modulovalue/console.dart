@@ -2,12 +2,12 @@ import 'package:console/format.dart';
 import 'package:console/icons.dart';
 import 'package:console/prompt.dart';
 
-var questionCount = 0;
-var points = 0;
+int questionCount = 0;
+int points = 0;
 
 class Question {
   final String message;
-  final answer;
+  final dynamic answer;
   final List<String>? choices;
 
   Question(this.message, this.answer, {this.choices});
@@ -15,12 +15,13 @@ class Question {
   bool askQuestion() {
     if (choices != null) {
       print(message);
-      var chooser = Chooser<String>(scramble(choices!), message: 'Answer: ');
+      final chooser = Chooser<String>(scramble(choices!), message: 'Answer: ');
       return chooser.chooseSync() == answer;
     } else if (answer is String) {
-      return Prompter('${message} ').promptSync()?.toLowerCase().trim() == answer.toLowerCase().trim();
+      // ignore: avoid_dynamic_calls
+      return Prompter('$message ').promptSync()?.toLowerCase().trim() == answer.toLowerCase().trim();
     } else if (answer is bool) {
-      return Prompter('${message} ').askSync() == answer;
+      return Prompter('$message ').askSync() == answer;
     } else {
       throw Exception('');
     }
@@ -36,7 +37,6 @@ void main() {
     'Vyacheslav Egorov',
     'Kathy Walrath',
   ];
-
   [
     Question('What conference was Dart released at?', 'GOTO Conference',
         choices: ['Google I/O', 'GOTO Conference', 'JavaOne', 'Dart Summit']),
@@ -51,7 +51,7 @@ void main() {
     Question('Before dart2js, what was the name of the Dart to JavaScript Compiler?', 'frog'),
   ].forEach((q) {
     questionCount++;
-    var correct = q.askQuestion();
+    final correct = q.askQuestion();
     if (correct) {
       print(format('{color.green}${Icon.checkmark}{color.normal} Correct'));
       points++;
@@ -65,13 +65,13 @@ void main() {
 
 void results() {
   print('Quiz Results:');
-  print('  Correct: ${points}');
+  print('  Correct: $points');
   print('  Incorrect: ${questionCount - points}');
   print('  Score: ${((points / questionCount) * 100).toStringAsFixed(2)}%');
 }
 
 List<String> scramble(List<String> choices) {
-  var out = List<String>.from(choices);
+  final out = List<String>.from(choices);
   out.shuffle();
   return out;
 }

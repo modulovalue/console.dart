@@ -20,9 +20,10 @@ class ConsoleCanvas extends Canvas {
   late Cursor cursor;
 
   ConsoleCanvas({PixelSpec defaultSpec = PixelSpec.EMPTY}) {
-    pixels = List<List<PixelSpec>>.generate(width, (i) {
-      return List<PixelSpec>.filled(height, defaultSpec);
-    });
+    pixels = List<List<PixelSpec>>.generate(
+      width,
+      (i) => List<PixelSpec>.filled(height, defaultSpec),
+    );
     cursor = Cursor();
   }
 
@@ -32,14 +33,14 @@ class ConsoleCanvas extends Canvas {
         ? spec
         : spec is int
             ? PixelSpec(color: spec)
-            : throw Exception('Invalid Pixel Spec: ${spec}');
+            : throw Exception('Invalid Pixel Spec: $spec');
   }
 
   void flush() {
     cursor.move(0, 0);
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        var pixel = pixels[x][y];
+        final pixel = pixels[x][y];
         Console.write('\x1b[48;5;${pixel.color}m ');
         cursor.move(x, y);
       }

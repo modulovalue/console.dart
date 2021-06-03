@@ -5,17 +5,15 @@ List<dynamic> bresenham(
   num y1, [
   void Function(int, int)? fn,
 ]) {
-  var arr = [];
-  fn ??= (x, y) {
-    arr.add({'x': x, 'y': y});
-  };
-  var dx = x1 - x0;
-  var dy = y1 - y0;
-  var adx = dx.abs();
-  var ady = dy.abs();
+  final arr = <dynamic>[];
+  fn ??= (x, y) => arr.add({'x': x, 'y': y});
+  final dx = x1 - x0;
+  final dy = y1 - y0;
+  final adx = dx.abs();
+  final ady = dy.abs();
   var eps = 0;
-  var sx = dx > 0 ? 1 : -1;
-  var sy = dy > 0 ? 1 : -1;
+  final sx = dx > 0 ? 1 : -1;
+  final sy = dy > 0 ? 1 : -1;
   if (adx > ady) {
     for (var x = x0, y = y0; sx < 0 ? x >= x1 : x <= x1; x += sx) {
       fn(x.round(), y.round());
@@ -29,7 +27,6 @@ List<dynamic> bresenham(
     for (var x = x0, y = y0; sy < 0 ? y >= y1 : y <= y1; y += sy) {
       fn(x.round(), y.round());
       eps += adx.toInt();
-
       if ((eps << 1) >= ady) {
         x += sx;
         eps -= ady.toInt();

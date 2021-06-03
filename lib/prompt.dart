@@ -22,25 +22,24 @@ class ShellPrompt {
   ShellPrompt({this.message = r'$ '});
 
   /// Stops a Loop
-  void stop() {
-    _stop = true;
-  }
+  void stop() => _stop = true;
 
   /// Runs a shell prompt in a loop.
   Stream<String> loop() {
-    var controller = StreamController<String>();
-    var doRead;
+    // ignore: close_sinks
+    final controller = StreamController<String>();
+    late void Function() doRead;
     doRead = () {
       if (_stop) {
         _stop = false;
-        return;
+      } else {
+        Prompter(message).prompt().then((it) {
+          controller.add(it);
+          Future<void>(doRead);
+        });
       }
-      Prompter(message).prompt().then((it) {
-        controller.add(it);
-        Future(doRead);
-      });
     };
-    Future(doRead);
+    Future<void>(doRead);
     return controller.stream;
   }
 }
@@ -52,77 +51,60 @@ class Chooser<T> {
 
   Chooser(this.choices, {this.message = 'Choice: ', this.formatter = _defaultFormatter});
 
-  static String _defaultFormatter(input, int index) => '[$index] $input';
+  static String _defaultFormatter(dynamic input, int index) => '[$index] $input';
 
   T chooseSync() {
-    var buff = StringBuffer();
+    final buff = StringBuffer();
     var i = -1;
-
-    for (var choice in choices) {
+    for (final choice in choices) {
       i++;
       buff.writeln(formatter(choice, i + 1));
     }
-
     buff.write(message);
-
-    while (true) {
-      var input = Prompter(buff.toString()).promptSync();
-      var result = _parseInteger(input ?? '');
-
+    for (;;) {
+      final input = Prompter(buff.toString()).promptSync();
+      final result = _parseInteger(input ?? '');
       if (result == null && input != null) {
-        var exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
+        final exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
         if (exists) {
-          var val = choices.firstWhere((it) {
+          final val = choices.firstWhere((it) {
             return it.toString().trim().toLowerCase() == input.trim().toLowerCase();
           });
-
           return val;
         }
       }
-
-      var choice;
-
       try {
         if (result != null) {
-          choice = choices[result - 1];
-          return choice;
+          return choices[result - 1];
         }
-        // ignore: empty_catches
+        // ignore: empty_catches, avoid_catches_without_on_clauses
       } catch (e) {}
     }
   }
 
   Future<dynamic> choose() {
-    var buff = StringBuffer();
+    final buff = StringBuffer();
     var i = -1;
-
-    for (var choice in choices) {
+    for (final choice in choices) {
       i++;
       buff.writeln(formatter(choice, i + 1));
     }
-
     buff.write(message);
-
-    var completer = Completer();
-
-    var process;
+    final completer = Completer<T>();
+    late void Function(String) process;
     process = (String input) {
-      var result = _parseInteger(input);
-
+      final result = _parseInteger(input);
       if (result == null) {
-        var exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
+        final exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
         if (exists) {
-          var val = choices.firstWhere((it) {
+          final val = choices.firstWhere((it) {
             return it.toString().trim().toLowerCase() == input.trim().toLowerCase();
           });
-
           completer.complete(val);
           return;
         }
       }
-
-      var choice;
-
+      T choice;
       try {
         if (result == null) {
           Prompter(buff.toString()).prompt().then(process);
@@ -130,13 +112,12 @@ class Chooser<T> {
           choice = choices[result - 1];
           completer.complete(choice);
         }
+      // ignore: avoid_catches_without_on_clauses
       } catch (e) {
         Prompter(buff.toString()).prompt().then(process);
       }
     };
-
     Prompter(buff.toString()).prompt().then(process);
-
     return completer.future;
   }
 }
@@ -147,7 +128,7 @@ class Prompter {
   final String message;
   final bool secret;
 
-  Prompter(this.message, {this.secret = false});
+  const Prompter(this.message, {this.secret = false});
 
   /// Prompts a user for a yes or no answer.
   ///
@@ -166,11 +147,13 @@ class Prompter {
   ///
   /// The input will be changed to lowercase and then checked.
   bool? askSync({List<String> positive = const []}) {
-    var answer = promptSync();
+    final answer = promptSync();
     if (answer == null) {
+      // ignore: avoid_returning_null
       return null;
+    } else {
+      return _YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
     }
-    return _YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
   }
 
   Future<bool> ask({List<String> positive = const []}) {
@@ -180,10 +163,10 @@ class Prompter {
   }
 
   String? promptSync({ResponseChecker? checker}) {
-    while (true) {
+    for (;;) {
       Console.adapter.write(message);
       if (secret) Console.adapter.echoMode = false;
-      var response = Console.readLine();
+      final response = Console.readLine();
       if (secret) {
         Console.adapter.echoMode = true;
         print('');
@@ -195,14 +178,13 @@ class Prompter {
   }
 
   Future<String> prompt({ResponseChecker? checker}) {
-    var completer = Completer<String>();
-
-    var doAsk;
+    final completer = Completer<String>();
+    late void Function() doAsk;
     doAsk = () {
       Console.adapter.write(message);
       Future(() {
         if (secret) Console.adapter.echoMode = false;
-        var response = Console.readLine();
+        final response = Console.readLine();
         if (secret) Console.adapter.echoMode = true;
         if (checker != null && response != null && !checker(response)) {
           doAsk();
@@ -211,9 +193,7 @@ class Prompter {
         completer.complete(response);
       });
     };
-
     doAsk();
-
     return completer.future;
   }
 }
@@ -224,6 +204,4 @@ Future<String> readInput(String message, {bool secret = false, ResponseChecker? 
 
 typedef ResponseChecker = bool Function(String response);
 
-int? _parseInteger(String input) {
-  return int.tryParse(input);
-}
+int? _parseInteger(String input) => int.tryParse(input);

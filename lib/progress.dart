@@ -18,47 +18,34 @@ class ProgressBar {
     if (progress == current) {
       return;
     }
-
     current = progress;
-
-    var ratio = progress / complete;
-    var percent = (ratio * 100).toInt();
-
-    var digits = percent.toString().length;
-
-    var w = Console.columns - digits - 4;
-
-    var count = (ratio * w).toInt();
-    var before = '${percent}% [';
-    var after = ']';
-
-    var out = StringBuffer(before);
-
+    final ratio = progress / complete;
+    final percent = (ratio * 100).toInt();
+    final digits = percent.toString().length;
+    final w = Console.columns - digits - 4;
+    final count = (ratio * w).toInt();
+    final before = '$percent% [';
+    const after = ']';
+    final out = StringBuffer(before);
     for (var x = 1; x < count; x++) {
       out.write('=');
     }
-
     out.write('>');
-
     for (var x = count; x < w; x++) {
       out.write(' ');
     }
-
     out.write(after);
-
     if (out.length - 1 == Console.columns) {
-      var it = out.toString();
-
+      final it = out.toString();
       out.clear();
       out.write(it.substring(0, it.length - 2) + ']');
     }
-
     Console.overwriteLine(out.toString());
   }
 }
 
 /// Specifies the next position of the loading bar
-typedef NextPositionLoadingBar = Function();
+typedef NextPositionLoadingBar = void Function();
 
 /// A loading bar
 class LoadingBar {
@@ -138,7 +125,7 @@ class WideLoadingBar {
 
   /// Loops the loading bar.
   Timer loop() {
-    var width = Console.columns - 2;
+    final width = Console.columns - 2;
     var goForward = true;
     var isDone = true;
 
@@ -151,7 +138,7 @@ class WideLoadingBar {
 
       for (var i = 1; i <= width; i++) {
         position = i;
-        await Future.delayed(const Duration(milliseconds: 5));
+        await Future<void>.delayed(const Duration(milliseconds: 5));
         if (goForward) {
           forward();
         } else {
@@ -165,10 +152,10 @@ class WideLoadingBar {
 
   /// Moves the Bar Forward
   void forward() {
-    var out = StringBuffer('[');
-    var width = Console.columns - 2;
-    var after = width - position;
-    var before = width - after - 1;
+    final out = StringBuffer('[');
+    final width = Console.columns - 2;
+    final after = width - position;
+    final before = width - after - 1;
     for (var i = 1; i <= before; i++) {
       out.write(' ');
     }
@@ -182,10 +169,10 @@ class WideLoadingBar {
 
   /// Moves the Bar Backward
   void backward() {
-    var out = StringBuffer('[');
-    var width = Console.columns - 2;
-    var before = width - position;
-    var after = width - before - 1;
+    final out = StringBuffer('[');
+    final width = Console.columns - 2;
+    final before = width - position;
+    final after = width - before - 1;
     for (var i = 1; i <= before; i++) {
       out.write(' ');
     }

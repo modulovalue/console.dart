@@ -1,22 +1,22 @@
 import 'base.dart';
 
 final Map<String, Color> COLORS = {
-  'black': Color(0),
-  'gray': Color(0, bright: true),
-  'dark_red': Color(1),
-  'red': Color(1, bright: true),
-  'green': Color(2),
-  'lime': Color(2, bright: true),
-  'gold': Color(3),
-  'yellow': Color(3, bright: true),
-  'dark_blue': Color(4),
-  'blue': Color(4, bright: true),
-  'magenta': Color(5),
-  'light_magenta': Color(5, bright: true),
-  'cyan': Color(6),
-  'light_cyan': Color(6, bright: true),
-  'light_gray': Color(7),
-  'white': Color(7, bright: true)
+  'black': const Color(0),
+  'gray': const Color(0, bright: true),
+  'dark_red': const Color(1),
+  'red': const Color(1, bright: true),
+  'green': const Color(2),
+  'lime': const Color(2, bright: true),
+  'gold': const Color(3),
+  'yellow': const Color(3, bright: true),
+  'dark_blue': const Color(4),
+  'blue': const Color(4, bright: true),
+  'magenta': const Color(5),
+  'light_magenta': const Color(5, bright: true),
+  'cyan': const Color(6),
+  'light_cyan': const Color(6, bright: true),
+  'light_gray': const Color(7),
+  'white': const Color(7, bright: true)
 };
 
 class Color {
@@ -58,7 +58,6 @@ class Color {
     if (xterm) {
       return '${Console.ANSI_ESCAPE}${background ? 38 : 48};5;${id}m';
     }
-
     if (bright) {
       return '${Console.ANSI_ESCAPE}1;${(background ? 40 : 30) + id}m';
     } else {
@@ -70,46 +69,68 @@ class Color {
 class TextPen {
   final StringBuffer buffer;
 
-  TextPen({StringBuffer? buffer}) : buffer = buffer ?? StringBuffer();
+  TextPen({
+    StringBuffer? buffer,
+  }) : buffer = buffer ?? StringBuffer();
 
   TextPen black() => setColor(Color.BLACK);
+
   TextPen blue() => setColor(Color.BLUE);
+
   TextPen red() => setColor(Color.RED);
+
   TextPen darkRed() => setColor(Color.DARK_RED);
+
   TextPen lime() => setColor(Color.LIME);
+
   TextPen green() => setColor(Color.GREEN);
+
   TextPen gold() => setColor(Color.GOLD);
+
   TextPen yellow() => setColor(Color.YELLOW);
+
   TextPen darkBlue() => setColor(Color.DARK_BLUE);
+
   TextPen magenta() => setColor(Color.MAGENTA);
+
   TextPen lightMagenta() => setColor(Color.LIGHT_MAGENTA);
+
   TextPen cyan() => setColor(Color.CYAN);
+
   TextPen lightCyan() => setColor(Color.LIGHT_CYAN);
+
   TextPen lightGray() => setColor(Color.LIGHT_GRAY);
+
   TextPen white() => setColor(Color.WHITE);
+
   TextPen gray() => setColor(Color.GRAY);
 
+  // ignore: avoid_returning_this
   TextPen normal() {
     buffer.write(Console.ANSI_ESCAPE + '0m');
     return this;
   }
 
+  // ignore: avoid_returning_this
   TextPen text(String input) {
     buffer.write(input);
     return this;
   }
 
+  // ignore: avoid_returning_this
   TextPen setColor(Color color) {
     buffer.write(color.toString());
     return this;
   }
 
+  // ignore: avoid_returning_this
   TextPen print() {
     normal();
     Console.adapter.writeln(buffer.toString());
     return this;
   }
 
+  // ignore: avoid_returning_this
   TextPen reset() {
     buffer.clear();
     return this;

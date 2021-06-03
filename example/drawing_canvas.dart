@@ -4,8 +4,7 @@ import 'dart:io';
 import 'package:console/drawing_canvas.dart';
 
 void main() {
-  var canvas = DrawingCanvas(120, 120);
-
+  final canvas = DrawingCanvas(120, 120);
   void draw() {
     for (var x = 1; x < canvas.width; x++) {
       for (var y = 1; y < canvas.height; y++) {
@@ -14,8 +13,7 @@ void main() {
     }
     print(canvas.frame());
   }
-
-  while (true) {
+  for (;;) {
     draw();
     sleep(const Duration(milliseconds: 16));
   }

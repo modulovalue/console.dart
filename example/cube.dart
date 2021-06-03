@@ -1,10 +1,10 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:console/drawing_canvas.dart';
 import 'package:console/utils.dart';
-
 import 'package:vector_math/vector_math.dart';
-import 'dart:math';
-import 'dart:io';
-import 'dart:async';
 
 List<List<double>> points = [
   [-1.0, -1.0, -1.0],
@@ -26,7 +26,7 @@ List<List<int>> quads = [
   [4, 7, 6, 5],
 ];
 
-var cube = (() {
+final cube = (() {
   return quads.map((quad) {
     return quad.map((v) {
       return Vector3.array(points[v]);
@@ -34,28 +34,27 @@ var cube = (() {
   }).toList();
 })();
 
-var projection = makePerspectiveMatrix(pi / 3.0, 1.0, 1.0, 50.0);
-var canvas = DrawingCanvas(160, 160);
+final projection = makePerspectiveMatrix(pi / 3.0, 1.0, 1.0, 50.0);
+final canvas = DrawingCanvas(160, 160);
 
 void draw() {
-  var now = DateTime.now().millisecondsSinceEpoch;
-  var modelView = makeViewMatrix(
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final modelView = makeViewMatrix(
     Vector3(0.0, 0.1, 4.0),
     Vector3(0.0, 0.0, 0.0),
     Vector3(0.0, 1.0, 0.0),
   );
-
   modelView.rotateY(pi * 2 * now / 10000);
   modelView.rotateZ(pi * 2 * now / 11000);
   modelView.rotateX(pi * 2 * now / 9000);
   modelView.scale(Vector3(sin(now / 1000 * pi) / 2 + 1, 1.0, 1.0));
   canvas.clear();
 
-  var transformed = cube.map((quad) {
+  final transformed = cube.map((quad) {
     return quad.map((v) {
       Matrix4 m;
       var out = Vector3.zero();
-      m = projection * modelView;
+      m = projection * modelView as Matrix4;
       out = m.transform3(v);
       return {
         'x': (out[0] * 40 + 80).floor(),
@@ -68,7 +67,7 @@ void draw() {
     var i = 0;
     final quad = quadIterable.toList();
     quad.forEach((v) {
-      var n = quad[((i.isNegative ? i.abs() : -i) + 1) % 4];
+      final n = quad[((i.isNegative ? i.abs() : -i) + 1) % 4];
       bresenham(v['x']!, v['y']!, n['x']!, n['y']!, canvas.set);
       i++;
     });
@@ -78,7 +77,7 @@ void draw() {
 }
 
 void main() {
-  Timer.periodic(Duration(milliseconds: 1000 ~/ 24), (_) {
+  Timer.periodic(const Duration(milliseconds: 1000 ~/ 24), (_) {
     draw();
   });
 }

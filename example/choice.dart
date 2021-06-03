@@ -2,10 +2,10 @@
 import 'package:console/prompt.dart';
 
 void main() {
-  var chooser = Chooser<String>(
+  final chooser = Chooser<String>(
     ['A', 'B', 'C', 'D'],
     message: 'Select a Letter: ',
   );
-  var letter = chooser.chooseSync();
-  print('You chose ${letter}.');
+  final letter = chooser.chooseSync();
+  print('You chose $letter.');
 }

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'color.dart';
 import 'adapter.dart';
+import 'color.dart';
 
 /// The root of the console API
 class Console {
@@ -14,19 +14,16 @@ class Console {
   static bool initialized = false;
   static Color? _currentTextColor;
   static Color? _currentBackgroundColor;
-  static ConsoleAdapter _adapter = StdioConsoleAdapter();
-
-  static ConsoleAdapter get adapter => _adapter;
-  static set adapter(ConsoleAdapter val) => _adapter = val;
+  static ConsoleAdapter adapter = StdioConsoleAdapter();
 
   /// Initializes the Console
   static void init() {
-    if (initialized) return;
-
-    initialized = true;
+    if (!initialized) {
+      initialized = true;
+    }
   }
 
-  static Stream get onResize => ProcessSignal.sigwinch.watch();
+  static Stream<dynamic> get onResize => ProcessSignal.sigwinch.watch();
 
   /// Moves the Cursor Forward the specified amount of [times].
   static void moveCursorForward([int times = 1]) => writeANSI('${times}C');
@@ -60,7 +57,7 @@ class Console {
   static void setTextColor(int id, {bool xterm = false, bool bright = false}) {
     Color color;
     if (xterm) {
-      var c = id.clamp(0, 256);
+      final c = id.clamp(0, 256);
       color = Color(c, xterm: true);
       sgr(38, [5, c]);
     } else {
@@ -75,6 +72,7 @@ class Console {
   }
 
   static Color? getTextColor() => _currentTextColor;
+
   static Color? getBackgroundColor() => _currentBackgroundColor;
 
   static void hideCursor() {
@@ -107,11 +105,10 @@ class Console {
     writeANSI('?47l');
   }
 
-  static void setBackgroundColor(int id,
-      {bool xterm = false, bool bright = false}) {
+  static void setBackgroundColor(int id, {bool xterm = false, bool bright = false}) {
     Color color;
     if (xterm) {
-      var c = id.clamp(0, 256);
+      final c = id.clamp(0, 256);
       color = Color(c, xterm: true);
       sgr(48, [5, c]);
     } else {
@@ -127,8 +124,8 @@ class Console {
 
   static void centerCursor({bool row = true}) {
     if (row) {
-      var column = (columns / 2).round();
-      var row = (rows / 2).round();
+      final column = (columns / 2).round();
+      final row = (rows / 2).round();
       moveCursor(row: row, column: column);
     } else {
       moveToColumn((columns / 2).round());
@@ -148,17 +145,25 @@ class Console {
   }
 
   static void setBold(bool bold) => sgr(bold ? 1 : 22);
+
   static void setItalic(bool italic) => sgr(italic ? 3 : 23);
+
   static void setBlink(bool blink) => sgr(blink ? 5 : 25);
+
   static void setUnderline(bool underline) => sgr(underline ? 4 : 24);
+
   static void setCrossedOut(bool crossedOut) => sgr(crossedOut ? 9 : 29);
+
   static void setFramed(bool framed) => sgr(framed ? 51 : 54);
+
   static void setEncircled(bool encircled) => sgr(encircled ? 52 : 54);
+
   static void setOverlined(bool overlined) => sgr(overlined ? 53 : 55);
 
   static void setInverted(bool flipped) => sgr(flipped ? 7 : 27);
 
   static void conceal() => sgr(8);
+
   static void reveal() => sgr(28);
 
   static void resetAll() {
@@ -180,59 +185,54 @@ class Console {
   static void sgr(int id, [List<int>? params]) {
     String stuff;
     if (params != null) {
-      stuff = "${id};${params.join(";")}";
+      stuff = "$id;${params.join(";")}";
     } else {
       stuff = id.toString();
     }
     writeANSI('${stuff}m');
   }
 
-  static int get rows => _adapter.rows;
-  static int get columns => _adapter.columns;
+  static int get rows => adapter.rows;
+
+  static int get columns => adapter.columns;
 
   static void nextLine([int times = 1]) => writeANSI('${times}E');
+
   static void previousLine([int times = 1]) => writeANSI('${times}F');
 
   static void write(String? content) {
     init();
-    _adapter.write(content);
+    adapter.write(content);
   }
 
-  static String? readLine() => _adapter.read();
+  static String? readLine() => adapter.read();
 
-  static void writeANSI(String after) => write('${ANSI_ESCAPE}${after}');
+  static void writeANSI(String after) => write('$ANSI_ESCAPE$after');
 
   static CursorPosition getCursorPosition() {
-    var lm = _adapter.lineMode;
-    var em = _adapter.echoMode;
-
-    _adapter.lineMode = false;
-    _adapter.echoMode = false;
-
+    final lm = adapter.lineMode;
+    final em = adapter.echoMode;
+    adapter.lineMode = false;
+    adapter.echoMode = false;
     writeANSI('6n');
-    var bytes = <int>[];
-
-    while (true) {
-      var byte = _adapter.readByte();
+    final bytes = <int>[];
+    for (;;) {
+      final byte = adapter.readByte();
       bytes.add(byte);
       if (byte == 82) {
         break;
       }
     }
-
-    _adapter.lineMode = lm;
-    _adapter.echoMode = em;
-
+    adapter.lineMode = lm;
+    adapter.echoMode = em;
     var str = String.fromCharCodes(bytes);
     str = str.substring(str.lastIndexOf('[') + 1, str.length - 1);
-
-    final parts =
-        List<int>.from(str.split(';').map((it) => int.parse(it))).toList();
-
+    final parts = List<int>.from(str.split(';').map<int>((it) => int.parse(it))).toList();
     return CursorPosition(parts[1], parts[0]);
   }
 
   static void saveCursor() => writeANSI('s');
+
   static void restoreCursor() => writeANSI('u');
 }
 
@@ -240,8 +240,8 @@ class CursorPosition {
   final int row;
   final int column;
 
-  CursorPosition(this.column, this.row);
+  const CursorPosition(this.column, this.row);
 
   @override
-  String toString() => '(${column}, ${row})';
+  String toString() => '($column, $row)';
 }

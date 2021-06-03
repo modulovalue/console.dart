@@ -2,7 +2,7 @@
 import 'package:console/prompt.dart';
 
 void main() {
-  var shell = ShellPrompt();
+  final shell = ShellPrompt();
   shell.loop().listen((line) {
     if (['stop', 'quit', 'exit'].contains(line.toLowerCase().trim())) {
       shell.stop();

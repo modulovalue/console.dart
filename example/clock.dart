@@ -8,14 +8,14 @@ import 'package:console/utils.dart';
 DrawingCanvas canvas = DrawingCanvas(160, 160);
 
 void main() {
-  Timer.periodic(Duration(milliseconds: 1000 ~/ 24), (t) {
+  Timer.periodic(const Duration(milliseconds: 1000 ~/ 24), (t) {
     draw();
   });
 }
 
 void draw() {
   canvas.clear();
-  var time = DateTime.now();
+  final time = DateTime.now();
   bresenham(
     80,
     80,

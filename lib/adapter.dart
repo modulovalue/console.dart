@@ -1,26 +1,34 @@
-
 import 'dart:async';
 import 'dart:io';
 
 abstract class ConsoleAdapter {
   int get rows;
+
   int get columns;
 
   void write(String? data);
+
   void writeln(String? data);
+
   String? read();
+
   int readByte();
+
   Stream<List<int>> byteStream();
 
   bool get echoMode;
+
   set echoMode(bool value);
+
   bool get lineMode;
+
   set lineMode(bool value);
 }
 
 class StdioConsoleAdapter extends ConsoleAdapter {
   @override
   int get columns => stdout.terminalColumns;
+
   @override
   int get rows => stdout.terminalLines;
 
@@ -66,6 +74,7 @@ class BufferConsoleAdapter extends ConsoleAdapter {
 
   @override
   int get columns => 80;
+
   @override
   int get rows => 20;
 
@@ -74,7 +83,8 @@ class BufferConsoleAdapter extends ConsoleAdapter {
 
   @override
   Stream<List<int>> byteStream() {
-    var c = StreamController<List<int>>();
+    // ignore: close_sinks
+    final c = StreamController<List<int>>();
     Future(() {
       c.add(input.codeUnits);
       c.add('\n'.codeUnits);

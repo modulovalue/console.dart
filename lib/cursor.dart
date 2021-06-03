@@ -5,37 +5,21 @@ class Cursor {
 
   Cursor();
 
-  void move(int column, int row) {
-    Console.moveCursor(column: column, row: row);
-  }
+  void move(int column, int row) => Console.moveCursor(column: column, row: row);
 
-  void moveUp([int times = 1]) {
-    Console.moveCursorUp(times);
-  }
+  void moveUp([int times = 1]) => Console.moveCursorUp(times);
 
-  void moveDown([int times = 1]) {
-    Console.moveCursorDown(times);
-  }
+  void moveDown([int times = 1]) => Console.moveCursorDown(times);
 
-  void moveLeft([int times = 1]) {
-    Console.moveCursorBack(times);
-  }
+  void moveLeft([int times = 1]) => Console.moveCursorBack(times);
 
-  void moveRight([int times = 1]) {
-    Console.moveCursorForward(times);
-  }
+  void moveRight([int times = 1]) => Console.moveCursorForward(times);
 
-  void show() {
-    Console.showCursor();
-  }
+  void show() => Console.showCursor();
 
-  void hide() {
-    Console.hideCursor();
-  }
+  void hide() => Console.hideCursor();
 
-  void write(String text) {
-    Console.write(text);
-  }
+  void write(String text) => Console.write(text);
 
   void writeAt(int column, int row, String text) {
     Console.saveCursor();
@@ -43,11 +27,7 @@ class Cursor {
     Console.restoreCursor();
   }
 
-  void save() {
-    Console.saveCursor();
-  }
+  void save() => Console.saveCursor();
 
-  void restore() {
-    Console.restoreCursor();
-  }
+  void restore() => Console.restoreCursor();
 }

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:console/progress.dart';
 
 void main() {
-  var loader = WideLoadingBar();
-  var timer = loader.loop();
-  Future.delayed(const Duration(seconds: 5)).then((_) {
+  final loader = WideLoadingBar();
+  final timer = loader.loop();
+  Future<dynamic>.delayed(const Duration(seconds: 5)).then((dynamic _) {
     timer.cancel();
   });
 }

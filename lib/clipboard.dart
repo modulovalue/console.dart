@@ -1,11 +1,8 @@
-
 import 'dart:io';
 
 Clipboard? getClipboard() {
   if (Platform.isMacOS) return OSXClipboard();
-  if (Platform.isLinux && File('/usr/bin/xclip').existsSync()) {
-    return XClipboard();
-  }
+  if (Platform.isLinux && File('/usr/bin/xclip').existsSync()) return XClipboard();
   return null;
 }
 
@@ -18,7 +15,7 @@ abstract class Clipboard {
 class OSXClipboard implements Clipboard {
   @override
   String getContent() {
-    var result = Process.runSync('/usr/bin/pbpaste', []);
+    final result = Process.runSync('/usr/bin/pbpaste', []);
     if (result.exitCode != 0) {
       throw Exception('Failed to get clipboard content.');
     }
@@ -37,8 +34,7 @@ class OSXClipboard implements Clipboard {
 class XClipboard implements Clipboard {
   @override
   String getContent() {
-    var result =
-        Process.runSync('/usr/bin/xclip', ['-selection', 'clipboard', '-o']);
+    final result = Process.runSync('/usr/bin/xclip', ['-selection', 'clipboard', '-o']);
     if (result.exitCode != 0) {
       throw Exception('Failed to get clipboard content.');
     }
@@ -47,8 +43,7 @@ class XClipboard implements Clipboard {
 
   @override
   void setContent(String content) {
-    Process.start('/usr/bin/xclip', ['-selection', 'clipboard'])
-        .then((process) {
+    Process.start('/usr/bin/xclip', ['-selection', 'clipboard']).then((process) {
       process.stdin.write(content);
       process.stdin.close();
     });

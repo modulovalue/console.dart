@@ -1,8 +1,7 @@
 import 'package:console/cursor.dart';
 
 void main() {
-  var cursor = Cursor();
-
+  final cursor = Cursor();
   cursor.moveDown(3);
   cursor.write('3: This is the third line.');
   cursor.moveUp(1);

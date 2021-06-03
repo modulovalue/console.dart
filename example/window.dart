@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:console/base.dart';
-import 'package:console/curses/window.dart';
 import 'package:console/keyboard.dart';
 import 'package:console/progress.dart';
+import 'package:console/window.dart';
 
 class DemoWindow extends Window {
   bool showWelcomeMessage = true;
@@ -25,7 +25,7 @@ class DemoWindow extends Window {
     } else {
       Console.centerCursor();
       Console.moveToColumn(1);
-      var loader = WideLoadingBar();
+      final loader = WideLoadingBar();
       loaderTimer = loader.loop();
     }
   }
@@ -59,6 +59,6 @@ class DemoWindow extends Window {
 }
 
 void main() {
-  var window = DemoWindow();
+  final window = DemoWindow();
   window.display();
 }
