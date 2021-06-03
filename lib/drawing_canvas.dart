@@ -1,4 +1,3 @@
-part of console;
 
 class DrawingCanvas {
   static final List<List<int>> _map = [

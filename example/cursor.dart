@@ -1,4 +1,4 @@
-import 'package:console/console.dart';
+import 'package:console/cursor.dart';
 
 void main() {
   var cursor = Cursor();

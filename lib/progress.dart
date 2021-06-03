@@ -1,4 +1,6 @@
-part of console;
+import 'dart:async';
+
+import 'base.dart';
 
 /// A fancy progress bar
 class ProgressBar {

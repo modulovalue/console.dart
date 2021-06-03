@@ -1,6 +1,5 @@
-part of console;
 
-final Map<String, String> _inputSequences = {
+final Map<String, String> inputSequences = {
   'A': 'up',
   'B': 'down',
   'C': 'right',

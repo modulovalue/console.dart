@@ -1,17 +1,20 @@
-part of console;
+import 'dart:async';
+import 'dart:io';
+
+import 'base.dart';
+import 'adapter.dart';
+import 'color.dart';
 
 abstract class VariableStyle {
-  static const _SingleBracketVariableStyle SINGLE_BRACKET =
-      _SingleBracketVariableStyle();
-  static const _DoubleBracketVariableStyle DOUBLE_BRACKET =
-      _DoubleBracketVariableStyle();
-  static const _BashBracketVariableStyle BASH_BRACKET =
-      _BashBracketVariableStyle();
+  static const _SingleBracketVariableStyle SINGLE_BRACKET = _SingleBracketVariableStyle();
+  static const _DoubleBracketVariableStyle DOUBLE_BRACKET = _DoubleBracketVariableStyle();
+  static const _BashBracketVariableStyle BASH_BRACKET = _BashBracketVariableStyle();
   static VariableStyle DEFAULT = SINGLE_BRACKET;
 
   const VariableStyle();
 
   Set<String> findVariables(String input);
+
   String replace(String input, String variable, String value);
 
   /// Calls [action] in a [Zone] that has it's format
@@ -103,11 +106,7 @@ class _SingleBracketVariableStyle extends VariableStyle {
 
 typedef VariableResolver = String Function(String variable);
 
-String format(String input,
-    {List<String>? args,
-    Map<String, String>? replace,
-    VariableStyle? style,
-    VariableResolver? resolver}) {
+String format(String input, {List<String>? args, Map<String, String>? replace, VariableStyle? style, VariableResolver? resolver}) {
   style ??= VariableStyle.DEFAULT;
 
   if (Zone.current['console.format.variable_style'] != null) {
@@ -141,8 +140,8 @@ String format(String input,
         throw Exception('color directive requires an argument');
       }
 
-      if (_COLORS.containsKey(color)) {
-        out = style.replace(out, '${id}', _COLORS[color].toString());
+      if (COLORS.containsKey(color)) {
+        out = style.replace(out, '${id}', COLORS[color].toString());
         continue;
       }
 

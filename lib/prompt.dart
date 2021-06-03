@@ -1,4 +1,6 @@
-part of console;
+import 'dart:async';
+
+import 'base.dart';
 
 const List<String> _YES_RESPONSES = [
   'yes',
@@ -27,9 +29,7 @@ class ShellPrompt {
   /// Runs a shell prompt in a loop.
   Stream<String> loop() {
     var controller = StreamController<String>();
-
     var doRead;
-
     doRead = () {
       if (_stop) {
         _stop = false;
@@ -40,9 +40,7 @@ class ShellPrompt {
         Future(doRead);
       });
     };
-
     Future(doRead);
-
     return controller.stream;
   }
 }
@@ -52,10 +50,9 @@ class Chooser<T> {
   final List<T> choices;
   final ChooserEntryFormatter<T> formatter;
 
-  Chooser(this.choices,
-      {this.message = 'Choice: ', this.formatter = _defaultFormatter});
+  Chooser(this.choices, {this.message = 'Choice: ', this.formatter = _defaultFormatter});
 
-  static String _defaultFormatter(input, int index) => '[${index}] ${input}';
+  static String _defaultFormatter(input, int index) => '[$index] $input';
 
   T chooseSync() {
     var buff = StringBuffer();
@@ -73,13 +70,10 @@ class Chooser<T> {
       var result = _parseInteger(input ?? '');
 
       if (result == null && input != null) {
-        var exists = choices
-            .map((it) => it.toString().trim().toLowerCase())
-            .contains(input.trim().toLowerCase());
+        var exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
         if (exists) {
           var val = choices.firstWhere((it) {
-            return it.toString().trim().toLowerCase() ==
-                input.trim().toLowerCase();
+            return it.toString().trim().toLowerCase() == input.trim().toLowerCase();
           });
 
           return val;
@@ -116,13 +110,10 @@ class Chooser<T> {
       var result = _parseInteger(input);
 
       if (result == null) {
-        var exists = choices
-            .map((it) => it.toString().trim().toLowerCase())
-            .contains(input.trim().toLowerCase());
+        var exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
         if (exists) {
           var val = choices.firstWhere((it) {
-            return it.toString().trim().toLowerCase() ==
-                input.trim().toLowerCase();
+            return it.toString().trim().toLowerCase() == input.trim().toLowerCase();
           });
 
           completer.complete(val);
@@ -179,14 +170,12 @@ class Prompter {
     if (answer == null) {
       return null;
     }
-    return _YES_RESPONSES.contains(answer.toLowerCase()) ||
-        positive.contains(message.toLowerCase());
+    return _YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
   }
 
   Future<bool> ask({List<String> positive = const []}) {
     return prompt().then((answer) {
-      return _YES_RESPONSES.contains(answer.toLowerCase()) ||
-          positive.contains(message.toLowerCase());
+      return _YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
     });
   }
 
@@ -229,8 +218,7 @@ class Prompter {
   }
 }
 
-Future<String> readInput(String message,
-    {bool secret = false, ResponseChecker? checker}) {
+Future<String> readInput(String message, {bool secret = false, ResponseChecker? checker}) {
   return Prompter(message, secret: secret).prompt(checker: checker);
 }
 

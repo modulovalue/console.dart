@@ -1,4 +1,4 @@
-import 'package:console/console.dart';
+import 'package:console/drawing_canvas.dart';
 import 'package:console/utils.dart';
 
 import 'package:vector_math/vector_math.dart';

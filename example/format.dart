@@ -1,4 +1,5 @@
-import 'package:console/console.dart';
+
+import 'package:console/format.dart';
 
 void main() {
   // Basic Builtin Variables

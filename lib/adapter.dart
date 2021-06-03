@@ -1,4 +1,6 @@
-part of console;
+
+import 'dart:async';
+import 'dart:io';
 
 abstract class ConsoleAdapter {
   int get rows;

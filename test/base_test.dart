@@ -1,8 +1,10 @@
 library console.test.base;
 
 import 'dart:convert';
+
+import 'package:console/adapter.dart';
+import 'package:console/base.dart';
 import 'package:test/test.dart';
-import 'package:console/console.dart';
 
 void main([args, port]) {
   final output = BufferConsoleAdapter();
@@ -58,12 +60,10 @@ class ANSIMatcher extends Matcher {
   Description describe(Description description) => description;
 
   @override
-  bool matches(item, Map matchState) =>
-      item.toString() == '${Console.ANSI_ESCAPE}${value}';
+  bool matches(item, Map matchState) => item.toString() == '${Console.ANSI_ESCAPE}$value';
 
   @override
-  Description describeMismatch(item, Description mismatchDescription,
-          Map matchState, bool verbose) =>
+  Description describeMismatch(item, Description mismatchDescription, Map matchState, bool verbose) =>
       mismatchDescription.add('${utf8.encode(item.toString())} != '
           ' ${utf8.encode(value.toString())}');
 }

@@ -1,4 +1,5 @@
-import 'package:console/console.dart';
+
+import 'package:console/color.dart';
 
 void main() {
   var pen = TextPen();

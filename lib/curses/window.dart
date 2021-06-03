@@ -1,14 +1,14 @@
-part of console.curses;
+import 'dart:async';
+import 'dart:io';
+
+import '../base.dart';
+import '../keyboard.dart';
 
 abstract class Window {
-  late String _title;
+  String title;
   Timer? _updateTimer;
 
-  String get title => _title;
-  set title(String value) => _title = value;
-
-  Window(String title) {
-    _title = title;
+  Window(this.title) {
     _init();
     initialize();
   }

@@ -1,4 +1,3 @@
-library console.clut;
 
 final List<List> CLUT = [
   [0, '000000'],

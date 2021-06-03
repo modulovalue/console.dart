@@ -1,6 +1,6 @@
-part of console;
+import 'base.dart';
 
-final Map<String, Color> _COLORS = {
+final Map<String, Color> COLORS = {
   'black': Color(0),
   'gray': Color(0, bright: true),
   'dark_red': Color(1),
@@ -43,7 +43,7 @@ class Color {
 
   const Color(this.id, {this.xterm = false, this.bright = false});
 
-  static Map<String, Color> getColors() => _COLORS;
+  static Map<String, Color> getColors() => COLORS;
 
   void makeCurrent({bool background = false}) {
     if (background) {
@@ -106,7 +106,7 @@ class TextPen {
 
   TextPen print() {
     normal();
-    Console._adapter.writeln(buffer.toString());
+    Console.adapter.writeln(buffer.toString());
     return this;
   }
 

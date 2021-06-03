@@ -1,6 +1,7 @@
-import 'package:console/console.dart';
 
 import 'dart:io';
+
+import 'package:console/drawing_canvas.dart';
 
 void main() {
   var canvas = DrawingCanvas(120, 120);

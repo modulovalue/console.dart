@@ -1,4 +1,7 @@
-part of console;
+import 'dart:async';
+
+import 'base.dart';
+import 'color.dart';
 
 /// A timer display that mimics pub's timer.
 class TimeDisplay {
@@ -40,8 +43,7 @@ class TimeDisplay {
         _isStart = false;
       } else {
         Console.moveCursorBack(_lastMsg.length);
-        var msg =
-            '(${(_watch!.elapsed.inMilliseconds / 1000).toStringAsFixed(place)}s)';
+        var msg = '(${(_watch!.elapsed.inMilliseconds / 1000).toStringAsFixed(place)}s)';
         _lastMsg = msg;
         Console.setBold(true);
         Console.setTextColor(Color.GRAY.id);

@@ -1,4 +1,5 @@
-import 'package:console/console.dart';
+
+import 'package:console/prompt.dart';
 
 void main() async {
   var username = await readInput('Username: ');

@@ -1,5 +1,7 @@
 import 'dart:async';
-import 'package:console/console.dart';
+
+import 'package:console/base.dart';
+import 'package:console/timer.dart';
 
 void main() {
   var timer = TimeDisplay();

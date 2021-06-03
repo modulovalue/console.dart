@@ -1,4 +1,4 @@
-import 'package:console/console.dart';
+import 'package:console/keyboard.dart';
 
 void main() {
   Keyboard.init();

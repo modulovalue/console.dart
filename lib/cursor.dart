@@ -1,4 +1,4 @@
-part of console;
+import 'base.dart';
 
 class Cursor {
   CursorPosition get position => Console.getCursorPosition();

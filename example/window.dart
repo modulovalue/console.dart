@@ -1,7 +1,10 @@
-import 'package:console/curses.dart';
-import 'dart:io';
-import 'package:console/console.dart';
 import 'dart:async';
+import 'dart:io';
+
+import 'package:console/base.dart';
+import 'package:console/curses/window.dart';
+import 'package:console/keyboard.dart';
+import 'package:console/progress.dart';
 
 class DemoWindow extends Window {
   bool showWelcomeMessage = true;

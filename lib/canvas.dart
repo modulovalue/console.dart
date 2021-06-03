@@ -1,7 +1,9 @@
-part of console;
+import 'base.dart';
+import 'cursor.dart';
 
 abstract class Canvas {
   int get width;
+
   int get height;
 
   void setPixel(int x, int y, int value);
@@ -10,6 +12,7 @@ abstract class Canvas {
 class ConsoleCanvas extends Canvas {
   @override
   int get width => Console.columns;
+
   @override
   int get height => Console.rows;
 

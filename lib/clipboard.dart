@@ -1,4 +1,5 @@
-part of console;
+
+import 'dart:io';
 
 Clipboard? getClipboard() {
   if (Platform.isMacOS) return OSXClipboard();

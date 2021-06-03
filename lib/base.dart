@@ -1,4 +1,7 @@
-part of console;
+import 'dart:io';
+
+import 'color.dart';
+import 'adapter.dart';
 
 /// The root of the console API
 class Console {

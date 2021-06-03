@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:console/console.dart';
+import 'package:console/base.dart';
+import 'package:console/drawing_canvas.dart';
 import 'package:console/utils.dart';
 
 DrawingCanvas canvas = DrawingCanvas(160, 160);

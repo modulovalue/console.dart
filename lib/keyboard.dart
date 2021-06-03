@@ -1,4 +1,10 @@
-part of console;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'base.dart';
+import 'sequences.dart';
+import 'color.dart';
 
 abstract class KeyCode {
   static const String UP = '${Console.ANSI_ESCAPE}A';
@@ -48,18 +54,15 @@ class Keyboard {
       stdin.echoMode = false;
       stdin.lineMode = false;
       _initialized = true;
-
       Console.adapter.byteStream().asBroadcastStream().map((bytes) {
         var it = ascii.decode(bytes);
         var original = bytes;
         var code = it.replaceAll(Console.ANSI_CODE, '');
-
         if (code.isNotEmpty) {
           code = code.substring(1);
         }
-
-        if (_inputSequences[code] != null) {
-          return [original, _inputSequences[code]];
+        if (inputSequences[code] != null) {
+          return [original, inputSequences[code]];
         } else {
           return [original, it];
         }
