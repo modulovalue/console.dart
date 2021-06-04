@@ -1,39 +1,35 @@
 import 'base.dart';
 import 'cursor.dart';
 
-abstract class Canvas {
+abstract class DCCanvas {
   int get width;
 
   int get height;
 
-  void setPixel(int x, int y, int value);
+  void setPixel(int x, int y, DCPixelSpec spec);
 }
 
-class ConsoleCanvas extends Canvas {
+class DCConsoleCanvas extends DCCanvas {
   @override
-  int get width => Console.columns;
+  int get width => DCConsole.columns;
 
   @override
-  int get height => Console.rows;
+  int get height => DCConsole.rows;
 
-  late List<List<PixelSpec>> pixels;
-  late Cursor cursor;
+  late List<List<DCPixelSpec>> pixels;
+  late DCCursor cursor;
 
-  ConsoleCanvas({PixelSpec defaultSpec = PixelSpec.EMPTY}) {
-    pixels = List<List<PixelSpec>>.generate(
+  DCConsoleCanvas({DCPixelSpec defaultSpec = DCPixelSpec.EMPTY}) {
+    pixels = List<List<DCPixelSpec>>.generate(
       width,
-      (i) => List<PixelSpec>.filled(height, defaultSpec),
+      (i) => List<DCPixelSpec>.filled(height, defaultSpec),
     );
-    cursor = Cursor();
+    cursor = DCCursor();
   }
 
   @override
-  void setPixel(int x, int y, dynamic spec) {
-    pixels[x][y] = spec is PixelSpec
-        ? spec
-        : spec is int
-            ? PixelSpec(color: spec)
-            : throw Exception('Invalid Pixel Spec: $spec');
+  void setPixel(int x, int y, DCPixelSpec spec) {
+    pixels[x][y] = spec;
   }
 
   void flush() {
@@ -41,17 +37,17 @@ class ConsoleCanvas extends Canvas {
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
         final pixel = pixels[x][y];
-        Console.write('\x1b[48;5;${pixel.color}m ');
+        DCConsole.write('\x1b[48;5;${pixel.color}m ');
         cursor.move(x, y);
       }
     }
   }
 }
 
-class PixelSpec {
-  static const PixelSpec EMPTY = PixelSpec();
+class DCPixelSpec {
+  static const DCPixelSpec EMPTY = DCPixelSpec(0);
 
   final int color;
 
-  const PixelSpec({this.color = 0});
+  const DCPixelSpec(this.color);
 }

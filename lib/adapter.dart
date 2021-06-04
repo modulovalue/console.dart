@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-abstract class ConsoleAdapter {
+abstract class DCConsoleAdapter {
   int get rows;
 
   int get columns;
@@ -25,7 +25,7 @@ abstract class ConsoleAdapter {
   set lineMode(bool value);
 }
 
-class StdioConsoleAdapter extends ConsoleAdapter {
+class DCStdioConsoleAdapter extends DCConsoleAdapter {
   @override
   int get columns => stdout.terminalColumns;
 
@@ -68,7 +68,7 @@ class StdioConsoleAdapter extends ConsoleAdapter {
   int readByte() => stdin.readByteSync();
 }
 
-class BufferConsoleAdapter extends ConsoleAdapter {
+class DCBufferConsoleAdapter extends DCConsoleAdapter {
   StringBuffer buffer = StringBuffer();
   String input = '';
 

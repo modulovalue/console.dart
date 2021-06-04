@@ -2,24 +2,13 @@ import 'dart:async';
 
 import 'base.dart';
 
-const List<String> _YES_RESPONSES = [
-  'yes',
-  'y',
-  'sure',
-  'ok',
-  'yep',
-  'yeah',
-  'true',
-  'yerp',
-];
-
 /// Emulates a Shell Prompt
-class ShellPrompt {
+class DCShellPrompt {
   /// Shell Prompt
   String message;
   bool _stop = false;
 
-  ShellPrompt({this.message = r'$ '});
+  DCShellPrompt({this.message = r'$ '});
 
   /// Stops a Loop
   void stop() => _stop = true;
@@ -33,7 +22,7 @@ class ShellPrompt {
       if (_stop) {
         _stop = false;
       } else {
-        Prompter(message).prompt().then((it) {
+        DCPrompter(message).prompt().then((it) {
           controller.add(it);
           Future<void>(doRead);
         });
@@ -44,12 +33,12 @@ class ShellPrompt {
   }
 }
 
-class Chooser<T> {
+class DCChooser<T> {
   final String message;
   final List<T> choices;
-  final ChooserEntryFormatter<T> formatter;
+  final String Function(T choice, int index) formatter;
 
-  Chooser(this.choices, {this.message = 'Choice: ', this.formatter = _defaultFormatter});
+  DCChooser(this.choices, {this.message = 'Choice: ', this.formatter = _defaultFormatter});
 
   static String _defaultFormatter(dynamic input, int index) => '[$index] $input';
 
@@ -62,7 +51,7 @@ class Chooser<T> {
     }
     buff.write(message);
     for (;;) {
-      final input = Prompter(buff.toString()).promptSync();
+      final input = DCPrompter(buff.toString()).promptSync();
       final result = _parseInteger(input ?? '');
       if (result == null && input != null) {
         final exists = choices.map((it) => it.toString().trim().toLowerCase()).contains(input.trim().toLowerCase());
@@ -107,28 +96,26 @@ class Chooser<T> {
       T choice;
       try {
         if (result == null) {
-          Prompter(buff.toString()).prompt().then(process);
+          DCPrompter(buff.toString()).prompt().then(process);
         } else {
           choice = choices[result - 1];
           completer.complete(choice);
         }
-      // ignore: avoid_catches_without_on_clauses
+        // ignore: avoid_catches_without_on_clauses
       } catch (e) {
-        Prompter(buff.toString()).prompt().then(process);
+        DCPrompter(buff.toString()).prompt().then(process);
       }
     };
-    Prompter(buff.toString()).prompt().then(process);
+    DCPrompter(buff.toString()).prompt().then(process);
     return completer.future;
   }
 }
 
-typedef ChooserEntryFormatter<T> = String Function(T choice, int index);
-
-class Prompter {
+class DCPrompter {
   final String message;
   final bool secret;
 
-  const Prompter(this.message, {this.secret = false});
+  const DCPrompter(this.message, {this.secret = false});
 
   /// Prompts a user for a yes or no answer.
   ///
@@ -152,23 +139,34 @@ class Prompter {
       // ignore: avoid_returning_null
       return null;
     } else {
-      return _YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
+      return DC_YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
     }
   }
 
   Future<bool> ask({List<String> positive = const []}) {
     return prompt().then((answer) {
-      return _YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
+      return DC_YES_RESPONSES.contains(answer.toLowerCase()) || positive.contains(message.toLowerCase());
     });
   }
 
-  String? promptSync({ResponseChecker? checker}) {
+  static const List<String> DC_YES_RESPONSES = [
+    'yes',
+    'y',
+    'sure',
+    'ok',
+    'yep',
+    'yeah',
+    'true',
+    'yerp',
+  ];
+
+  String? promptSync({bool Function(String response)? checker}) {
     for (;;) {
-      Console.adapter.write(message);
-      if (secret) Console.adapter.echoMode = false;
-      final response = Console.readLine();
+      DCConsole.adapter.write(message);
+      if (secret) DCConsole.adapter.echoMode = false;
+      final response = DCConsole.readLine();
       if (secret) {
-        Console.adapter.echoMode = true;
+        DCConsole.adapter.echoMode = true;
         print('');
       }
       if ((checker != null && response != null) ? checker(response) : true) {
@@ -177,15 +175,15 @@ class Prompter {
     }
   }
 
-  Future<String> prompt({ResponseChecker? checker}) {
+  Future<String> prompt({bool Function(String response)? checker}) {
     final completer = Completer<String>();
     late void Function() doAsk;
     doAsk = () {
-      Console.adapter.write(message);
+      DCConsole.adapter.write(message);
       Future(() {
-        if (secret) Console.adapter.echoMode = false;
-        final response = Console.readLine();
-        if (secret) Console.adapter.echoMode = true;
+        if (secret) DCConsole.adapter.echoMode = false;
+        final response = DCConsole.readLine();
+        if (secret) DCConsole.adapter.echoMode = true;
         if (checker != null && response != null && !checker(response)) {
           doAsk();
           return;
@@ -198,10 +196,11 @@ class Prompter {
   }
 }
 
-Future<String> readInput(String message, {bool secret = false, ResponseChecker? checker}) {
-  return Prompter(message, secret: secret).prompt(checker: checker);
-}
-
-typedef ResponseChecker = bool Function(String response);
+Future<String> readInput(
+  String message, {
+  bool secret = false,
+  bool Function(String response)? checker,
+}) =>
+    DCPrompter(message, secret: secret).prompt(checker: checker);
 
 int? _parseInteger(String input) => int.tryParse(input);

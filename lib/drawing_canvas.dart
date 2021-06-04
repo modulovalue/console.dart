@@ -1,4 +1,4 @@
-class DrawingCanvas {
+class DCDrawingCanvas {
   static final List<List<int>> _map = [
     [0x1, 0x8],
     [0x2, 0x10],
@@ -9,7 +9,7 @@ class DrawingCanvas {
   final int height;
   late List<int> content;
 
-  DrawingCanvas(this.width, this.height) {
+  DCDrawingCanvas(this.width, this.height) {
     if (width % 2 != 0) {
       throw Exception('Width must be a multiple of 2!');
     }

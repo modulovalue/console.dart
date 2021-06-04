@@ -7,36 +7,36 @@ import 'package:console/base.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final output = BufferConsoleAdapter();
-  setUpAll(() => Console.adapter = output);
+  final output = DCBufferConsoleAdapter();
+  setUpAll(() => DCConsole.adapter = output);
   setUp(() => output.clear());
   group('base functions', () {
     test('centerCursor', () {
-      Console.centerCursor();
+      DCConsole.centerCursor();
       expect(output, ansi('10;40H'));
     });
     test('hideCursor', () {
-      Console.hideCursor();
+      DCConsole.hideCursor();
       expect(output, ansi('?25l'));
     });
     test('showCursor', () {
-      Console.showCursor();
+      DCConsole.showCursor();
       expect(output, ansi('?25h'));
     });
     test('moveCursorForward', () {
-      Console.moveCursorForward(1);
+      DCConsole.moveCursorForward(1);
       expect(output, ansi('1C'));
     });
     test('moveCursorBack', () {
-      Console.moveCursorBack(1);
+      DCConsole.moveCursorBack(1);
       expect(output, ansi('1D'));
     });
     test('moveCursorUp', () {
-      Console.moveCursorUp(1);
+      DCConsole.moveCursorUp(1);
       expect(output, ansi('1A'));
     });
     test('moveCursorDown', () {
-      Console.moveCursorDown(1);
+      DCConsole.moveCursorDown(1);
       expect(output, ansi('1B'));
     });
   });
@@ -51,7 +51,7 @@ class ANSIMatcher extends Matcher {
   Description describe(Description description) => description;
 
   @override
-  bool matches(dynamic item, Map<dynamic, dynamic> matchState) => item.toString() == '${Console.ANSI_ESCAPE}$value';
+  bool matches(dynamic item, Map<dynamic, dynamic> matchState) => item.toString() == '${DCConsole.ANSI_ESCAPE}$value';
 
   @override
   Description describeMismatch(dynamic item, Description mismatchDescription, Map<dynamic, dynamic> matchState, bool verbose) =>

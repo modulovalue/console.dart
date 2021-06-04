@@ -6,7 +6,14 @@ import 'package:console/drawing_canvas.dart';
 import 'package:console/utils.dart';
 import 'package:vector_math/vector_math.dart';
 
-List<List<double>> points = [
+// Draws a 3D cube with DrawingCanvas. |
+void main() {
+  Timer.periodic(const Duration(milliseconds: 1000 ~/ 24), (_) {
+    draw();
+  });
+}
+
+final points = [
   [-1.0, -1.0, -1.0],
   [-1.0, -1.0, 1.0],
   [1.0, -1.0, 1.0],
@@ -17,7 +24,7 @@ List<List<double>> points = [
   [1.0, 1.0, -1.0],
 ];
 
-List<List<int>> quads = [
+final quads = [
   [0, 1, 2, 3],
   [0, 4, 5, 1],
   [1, 5, 6, 2],
@@ -35,7 +42,7 @@ final cube = (() {
 })();
 
 final projection = makePerspectiveMatrix(pi / 3.0, 1.0, 1.0, 50.0);
-final canvas = DrawingCanvas(160, 160);
+final canvas = DCDrawingCanvas(160, 160);
 
 void draw() {
   final now = DateTime.now().millisecondsSinceEpoch;
@@ -62,7 +69,6 @@ void draw() {
       };
     });
   });
-
   transformed.forEach((quadIterable) {
     var i = 0;
     final quad = quadIterable.toList();
@@ -72,12 +78,5 @@ void draw() {
       i++;
     });
   });
-
   stdout.write(canvas.frame());
-}
-
-void main() {
-  Timer.periodic(const Duration(milliseconds: 1000 ~/ 24), (_) {
-    draw();
-  });
 }

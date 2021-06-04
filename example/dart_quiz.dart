@@ -1,33 +1,6 @@
-import 'package:console/format.dart';
-import 'package:console/icons.dart';
 import 'package:console/prompt.dart';
 
-int questionCount = 0;
-int points = 0;
-
-class Question {
-  final String message;
-  final dynamic answer;
-  final List<String>? choices;
-
-  Question(this.message, this.answer, {this.choices});
-
-  bool askQuestion() {
-    if (choices != null) {
-      print(message);
-      final chooser = Chooser<String>(scramble(choices!), message: 'Answer: ');
-      return chooser.chooseSync() == answer;
-    } else if (answer is String) {
-      // ignore: avoid_dynamic_calls
-      return Prompter('$message ').promptSync()?.toLowerCase().trim() == answer.toLowerCase().trim();
-    } else if (answer is bool) {
-      return Prompter('$message ').askSync() == answer;
-    } else {
-      throw Exception('');
-    }
-  }
-}
-
+// Multiple choice quiz demonstrating various console features.
 void main() {
   const dartPeople = [
     'Dan Grove',
@@ -53,10 +26,10 @@ void main() {
     questionCount++;
     final correct = q.askQuestion();
     if (correct) {
-      print(format('{color.green}${Icon.checkmark}{color.normal} Correct'));
+      print('Correct');
       points++;
     } else {
-      print(format('{color.red}${Icon.ballotX}{color.normal} Incorrect'));
+      print('Incorrect');
     }
   });
 
@@ -74,4 +47,30 @@ List<String> scramble(List<String> choices) {
   final out = List<String>.from(choices);
   out.shuffle();
   return out;
+}
+
+int questionCount = 0;
+int points = 0;
+
+class Question {
+  final String message;
+  final dynamic answer;
+  final List<String>? choices;
+
+  Question(this.message, this.answer, {this.choices});
+
+  bool askQuestion() {
+    if (choices != null) {
+      print(message);
+      final chooser = DCChooser<String>(scramble(choices!), message: 'Answer: ');
+      return chooser.chooseSync() == answer;
+    } else if (answer is String) {
+      // ignore: avoid_dynamic_calls
+      return DCPrompter('$message ').promptSync()?.toLowerCase().trim() == answer.toLowerCase().trim();
+    } else if (answer is bool) {
+      return DCPrompter('$message ').askSync() == answer;
+    } else {
+      throw Exception('');
+    }
+  }
 }

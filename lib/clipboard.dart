@@ -1,18 +1,18 @@
 import 'dart:io';
 
-Clipboard? getClipboard() {
-  if (Platform.isMacOS) return OSXClipboard();
-  if (Platform.isLinux && File('/usr/bin/xclip').existsSync()) return XClipboard();
+DCClipboard? getClipboard() {
+  if (Platform.isMacOS) return DCOSXClipboard();
+  if (Platform.isLinux && File('/usr/bin/xclip').existsSync()) return DCXClipboard();
   return null;
 }
 
-abstract class Clipboard {
+abstract class DCClipboard {
   String getContent();
 
   void setContent(String content);
 }
 
-class OSXClipboard implements Clipboard {
+class DCOSXClipboard implements DCClipboard {
   @override
   String getContent() {
     final result = Process.runSync('/usr/bin/pbpaste', []);
@@ -31,7 +31,7 @@ class OSXClipboard implements Clipboard {
   }
 }
 
-class XClipboard implements Clipboard {
+class DCXClipboard implements DCClipboard {
   @override
   String getContent() {
     final result = Process.runSync('/usr/bin/xclip', ['-selection', 'clipboard', '-o']);

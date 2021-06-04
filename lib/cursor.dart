@@ -1,33 +1,33 @@
 import 'base.dart';
 
-class Cursor {
-  CursorPosition get position => Console.getCursorPosition();
+class DCCursor {
+  DCCursorPosition get position => DCConsole.getCursorPosition();
 
-  Cursor();
+  DCCursor();
 
-  void move(int column, int row) => Console.moveCursor(column: column, row: row);
+  void move(int column, int row) => DCConsole.moveCursor(column: column, row: row);
 
-  void moveUp([int times = 1]) => Console.moveCursorUp(times);
+  void moveUp([int times = 1]) => DCConsole.moveCursorUp(times);
 
-  void moveDown([int times = 1]) => Console.moveCursorDown(times);
+  void moveDown([int times = 1]) => DCConsole.moveCursorDown(times);
 
-  void moveLeft([int times = 1]) => Console.moveCursorBack(times);
+  void moveLeft([int times = 1]) => DCConsole.moveCursorBack(times);
 
-  void moveRight([int times = 1]) => Console.moveCursorForward(times);
+  void moveRight([int times = 1]) => DCConsole.moveCursorForward(times);
 
-  void show() => Console.showCursor();
+  void show() => DCConsole.showCursor();
 
-  void hide() => Console.hideCursor();
+  void hide() => DCConsole.hideCursor();
 
-  void write(String text) => Console.write(text);
+  void write(String text) => DCConsole.write(text);
 
   void writeAt(int column, int row, String text) {
-    Console.saveCursor();
+    DCConsole.saveCursor();
     write(text);
-    Console.restoreCursor();
+    DCConsole.restoreCursor();
   }
 
-  void save() => Console.saveCursor();
+  void save() => DCConsole.saveCursor();
 
-  void restore() => Console.restoreCursor();
+  void restore() => DCConsole.restoreCursor();
 }

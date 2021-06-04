@@ -1,9 +1,9 @@
+import 'package:console/base.dart';
 
-import 'package:console/color.dart';
-
+// Setting colored output with the TextPen class.
 void main() {
-  final pen = TextPen();
-  for (final c in Color.getColors().entries) {
+  final pen = DCTextPen();
+  for (final c in DCColor.getColors().entries) {
     pen.setColor(c.value);
     pen.text('${c.key}\n');
   }

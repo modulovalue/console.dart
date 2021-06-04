@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'adapter.dart';
-import 'color.dart';
 
 /// The root of the console API
-class Console {
+class DCConsole {
   static const String ANSI_CODE = '\x1b';
 
   /// ANSI Escape Code
@@ -12,9 +11,9 @@ class Console {
   static bool _cursorCTRLC = false;
   static bool _buffCTRLC = false;
   static bool initialized = false;
-  static Color? _currentTextColor;
-  static Color? _currentBackgroundColor;
-  static ConsoleAdapter adapter = StdioConsoleAdapter();
+  static DCColor? _currentTextColor;
+  static DCColor? _currentBackgroundColor;
+  static DCConsoleAdapter adapter = DCStdioConsoleAdapter();
 
   /// Initializes the Console
   static void init() {
@@ -55,13 +54,13 @@ class Console {
 
   /// Sets the Current Text Color.
   static void setTextColor(int id, {bool xterm = false, bool bright = false}) {
-    Color color;
+    DCColor color;
     if (xterm) {
       final c = id.clamp(0, 256);
-      color = Color(c, xterm: true);
+      color = DCColor(c, xterm: true);
       sgr(38, [5, c]);
     } else {
-      color = Color(id, bright: true);
+      color = DCColor(id, bright: true);
       if (bright) {
         sgr(30 + id, [1]);
       } else {
@@ -71,9 +70,9 @@ class Console {
     _currentTextColor = color;
   }
 
-  static Color? getTextColor() => _currentTextColor;
+  static DCColor? getTextColor() => _currentTextColor;
 
-  static Color? getBackgroundColor() => _currentBackgroundColor;
+  static DCColor? getBackgroundColor() => _currentBackgroundColor;
 
   static void hideCursor() {
     if (!_cursorCTRLC) {
@@ -106,13 +105,13 @@ class Console {
   }
 
   static void setBackgroundColor(int id, {bool xterm = false, bool bright = false}) {
-    Color color;
+    DCColor color;
     if (xterm) {
       final c = id.clamp(0, 256);
-      color = Color(c, xterm: true);
+      color = DCColor(c, xterm: true);
       sgr(48, [5, c]);
     } else {
-      color = Color(id, bright: true);
+      color = DCColor(id, bright: true);
       if (bright) {
         sgr(40 + id, [1]);
       } else {
@@ -209,7 +208,7 @@ class Console {
 
   static void writeANSI(String after) => write('$ANSI_ESCAPE$after');
 
-  static CursorPosition getCursorPosition() {
+  static DCCursorPosition getCursorPosition() {
     final lm = adapter.lineMode;
     final em = adapter.echoMode;
     adapter.lineMode = false;
@@ -228,7 +227,7 @@ class Console {
     var str = String.fromCharCodes(bytes);
     str = str.substring(str.lastIndexOf('[') + 1, str.length - 1);
     final parts = List<int>.from(str.split(';').map<int>((it) => int.parse(it))).toList();
-    return CursorPosition(parts[1], parts[0]);
+    return DCCursorPosition(parts[1], parts[0]);
   }
 
   static void saveCursor() => writeANSI('s');
@@ -236,12 +235,160 @@ class Console {
   static void restoreCursor() => writeANSI('u');
 }
 
-class CursorPosition {
+class DCCursorPosition {
   final int row;
   final int column;
 
-  const CursorPosition(this.column, this.row);
+  const DCCursorPosition(this.column, this.row);
 
   @override
   String toString() => '($column, $row)';
+}
+
+final Map<String, DCColor> DCCOLORS = {
+  'black': const DCColor(0),
+  'gray': const DCColor(0, bright: true),
+  'dark_red': const DCColor(1),
+  'red': const DCColor(1, bright: true),
+  'green': const DCColor(2),
+  'lime': const DCColor(2, bright: true),
+  'gold': const DCColor(3),
+  'yellow': const DCColor(3, bright: true),
+  'dark_blue': const DCColor(4),
+  'blue': const DCColor(4, bright: true),
+  'magenta': const DCColor(5),
+  'light_magenta': const DCColor(5, bright: true),
+  'cyan': const DCColor(6),
+  'light_cyan': const DCColor(6, bright: true),
+  'light_gray': const DCColor(7),
+  'white': const DCColor(7, bright: true)
+};
+
+class DCColor {
+  static const DCColor BLACK = DCColor(0);
+  static const DCColor GRAY = DCColor(0, bright: true);
+  static const DCColor RED = DCColor(1, bright: true);
+  static const DCColor DARK_RED = DCColor(1);
+  static const DCColor LIME = DCColor(2, bright: true);
+  static const DCColor GREEN = DCColor(2);
+  static const DCColor GOLD = DCColor(3);
+  static const DCColor YELLOW = DCColor(3, bright: true);
+  static const DCColor BLUE = DCColor(4, bright: true);
+  static const DCColor DARK_BLUE = DCColor(4);
+  static const DCColor MAGENTA = DCColor(5);
+  static const DCColor LIGHT_MAGENTA = DCColor(5, bright: true);
+  static const DCColor CYAN = DCColor(6);
+  static const DCColor LIGHT_CYAN = DCColor(6, bright: true);
+  static const DCColor LIGHT_GRAY = DCColor(7);
+  static const DCColor WHITE = DCColor(7, bright: true);
+
+  final int id;
+  final bool xterm;
+  final bool bright;
+
+  const DCColor(this.id, {this.xterm = false, this.bright = false});
+
+  static Map<String, DCColor> getColors() => DCCOLORS;
+
+  void makeCurrent({bool background = false}) {
+    if (background) {
+      DCConsole.setBackgroundColor(id, xterm: xterm, bright: bright);
+    } else {
+      DCConsole.setTextColor(id, xterm: xterm, bright: bright);
+    }
+  }
+
+  @override
+  String toString({bool background = false}) {
+    if (xterm) {
+      return '${DCConsole.ANSI_ESCAPE}${background ? 38 : 48};5;${id}m';
+    }
+    if (bright) {
+      return '${DCConsole.ANSI_ESCAPE}1;${(background ? 40 : 30) + id}m';
+    } else {
+      return '${DCConsole.ANSI_ESCAPE}0;${(background ? 40 : 30) + id}m';
+    }
+  }
+}
+
+class DCTextPen {
+  final StringBuffer buffer;
+
+  DCTextPen({
+    StringBuffer? buffer,
+  }) : buffer = buffer ?? StringBuffer();
+
+  DCTextPen black() => setColor(DCColor.BLACK);
+
+  DCTextPen blue() => setColor(DCColor.BLUE);
+
+  DCTextPen red() => setColor(DCColor.RED);
+
+  DCTextPen darkRed() => setColor(DCColor.DARK_RED);
+
+  DCTextPen lime() => setColor(DCColor.LIME);
+
+  DCTextPen green() => setColor(DCColor.GREEN);
+
+  DCTextPen gold() => setColor(DCColor.GOLD);
+
+  DCTextPen yellow() => setColor(DCColor.YELLOW);
+
+  DCTextPen darkBlue() => setColor(DCColor.DARK_BLUE);
+
+  DCTextPen magenta() => setColor(DCColor.MAGENTA);
+
+  DCTextPen lightMagenta() => setColor(DCColor.LIGHT_MAGENTA);
+
+  DCTextPen cyan() => setColor(DCColor.CYAN);
+
+  DCTextPen lightCyan() => setColor(DCColor.LIGHT_CYAN);
+
+  DCTextPen lightGray() => setColor(DCColor.LIGHT_GRAY);
+
+  DCTextPen white() => setColor(DCColor.WHITE);
+
+  DCTextPen gray() => setColor(DCColor.GRAY);
+
+  // ignore: avoid_returning_this
+  DCTextPen normal() {
+    buffer.write(DCConsole.ANSI_ESCAPE + '0m');
+    return this;
+  }
+
+  // ignore: avoid_returning_this
+  DCTextPen text(String input) {
+    buffer.write(input);
+    return this;
+  }
+
+  // ignore: avoid_returning_this
+  DCTextPen setColor(DCColor color) {
+    buffer.write(color.toString());
+    return this;
+  }
+
+  // ignore: avoid_returning_this
+  DCTextPen print() {
+    normal();
+    DCConsole.adapter.writeln(buffer.toString());
+    return this;
+  }
+
+  // ignore: avoid_returning_this
+  DCTextPen reset() {
+    buffer.clear();
+    return this;
+  }
+
+  void call([String? input]) {
+    if (input != null) {
+      text(input);
+    } else {
+      print();
+    }
+  }
+
+  @override
+  String toString() => buffer.toString();
 }

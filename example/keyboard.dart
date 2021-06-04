@@ -1,13 +1,12 @@
 import 'package:console/keyboard.dart';
 
+// Traps up and down arrow and echos to console.
 void main() {
-  Keyboard.init();
-
-  Keyboard.bindKey('up').listen((_) {
+  DCKeyboard.init();
+  DCKeyboard.bindKey('up').listen((_) {
     print('Up.');
   });
-
-  Keyboard.bindKey('down').listen((_) {
+  DCKeyboard.bindKey('down').listen((_) {
     print('Down.');
   });
 }
